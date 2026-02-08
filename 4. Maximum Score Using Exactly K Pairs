@@ -1,0 +1,47 @@
+class Solution {
+    public long maxScore(int[] nums1, int[] nums2, int k) {
+         int n = nums1.length;
+        int m = nums2.length;
+
+        long[][] dp = new long[m + 1][k + 1];
+
+        // Initialize with very small values
+        for (int j = 0; j <= m; j++) {
+            Arrays.fill(dp[j], Long.MIN_VALUE / 2);
+            dp[j][0] = 0;  // 0 pairs → score 0
+        }
+
+        for (int i = 1; i <= n; i++) {
+
+            long[][] newDp = new long[m + 1][k + 1];
+            for (int j = 0; j <= m; j++) {
+                Arrays.fill(newDp[j], Long.MIN_VALUE / 2);
+                newDp[j][0] = 0;
+            }
+
+            for (int j = 1; j <= m; j++) {
+                for (int t = 0; t <= k; t++) {
+
+                    // Skip cases
+                    newDp[j][t] = Math.max(
+                        newDp[j - 1][t],
+                        dp[j][t]
+                    );
+
+                    // Take pair
+                    if (t > 0) {
+                        newDp[j][t] = Math.max(
+                            newDp[j][t],
+                            dp[j - 1][t - 1] +
+                            (long) nums1[i - 1] * nums2[j - 1]
+                        );
+                    }
+                }
+            }
+
+            dp = newDp;
+        }
+
+        return dp[m][k];
+    }
+}
